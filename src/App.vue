@@ -1,17 +1,10 @@
 <template>
   <v-app>
-    <v-main>
-      <router-view />
-    </v-main>
+    <router-view />
+    <my-bottom-nav />
   </v-app>
 </template>
 
-<script>
-export default {
-  name: "App",
-
-  data: () => ({
-    //
-  }),
-};
+<script setup>
+import MyBottomNav from "@/components/MyBottomNav.vue";
 </script>
