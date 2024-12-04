@@ -1,6 +1,8 @@
 <template>
   <v-app>
-    <router-view />
+    <v-container fluid class="pa-5">
+      <router-view />
+    </v-container>
     <my-bottom-nav />
   </v-app>
 </template>
