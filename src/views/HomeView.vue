@@ -11,19 +11,14 @@
     <v-row>
       <v-col>
         <v-list>
-          <v-list-item
+          <my-item-task
             v-for="task in tasks"
             :key="task.id"
-            @click="editTask(task)"
-          >
-            <v-list-item-title>{{ task.title }}</v-list-item-title>
-            <v-list-item-subtitle>{{ task.description }}</v-list-item-subtitle>
-            <v-list-item-action>
-              <v-btn icon @click.stop="deleteTask(task.id)">
-                <v-icon>mdi-delete</v-icon>
-              </v-btn>
-            </v-list-item-action>
-          </v-list-item>
+            :task="task"
+            @deleteTask="deleteTask"
+            @editTask="editTask"
+            @toggleComplete="toggleComplete"
+          ></my-item-task>
         </v-list>
       </v-col>
     </v-row>
@@ -46,6 +41,36 @@
               label="Description"
               required
             ></v-textarea>
+            <v-select
+              v-model="newTask.priority"
+              :items="['High', 'Medium', 'Low']"
+              label="Priority"
+              required
+            ></v-select>
+            <v-menu
+              ref="dueDateMenu"
+              v-model="dueDateMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="newTask.dueDate"
+                  label="Due Date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="newTask.dueDate"
+                @input="dueDateMenu = false"
+              ></v-date-picker>
+            </v-menu>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -76,6 +101,36 @@
               label="Description"
               required
             ></v-textarea>
+            <v-select
+              v-model="currentTask.priority"
+              :items="['High', 'Medium', 'Low']"
+              label="Priority"
+              required
+            ></v-select>
+            <v-menu
+              ref="editDueDateMenu"
+              v-model="editDueDateMenu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="currentTask.dueDate"
+                  label="Due Date"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="currentTask.dueDate"
+                @input="editDueDateMenu = false"
+              ></v-date-picker>
+            </v-menu>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -90,49 +145,110 @@
   </v-container>
 </template>
 
-<script setup>
+<script>
+import MyItemTask from "../components/MyItemTask.vue";
 import { ref } from "vue";
 
-const tasks = ref([
-  { id: 1, title: "Task 1", description: "Description 1" },
-  { id: 2, title: "Task 2", description: "Description 2" },
-]);
+export default {
+  name: "HomeView",
+  components: {
+    MyItemTask,
+  },
+  setup() {
+    const tasks = ref([
+      {
+        id: 1,
+        title: "Task 1",
+        description: "Description 1",
+        priority: "High",
+        dueDate: new Date(),
+        completed: false,
+      },
+      {
+        id: 2,
+        title: "Task 2",
+        description: "Description 2",
+        priority: "Medium",
+        dueDate: new Date(),
+        completed: false,
+      },
+    ]);
 
-const showAddTaskDialog = ref(false);
-const showEditTaskDialog = ref(false);
-const newTask = ref({ title: "", description: "" });
-const currentTask = ref({ id: null, title: "", description: "" });
-
-const addTask = () => {
-  if (newTask.value.title && newTask.value.description) {
-    tasks.value.push({
-      id: Date.now(),
-      title: newTask.value.title,
-      description: newTask.value.description,
+    const showAddTaskDialog = ref(false);
+    const showEditTaskDialog = ref(false);
+    const newTask = ref({
+      title: "",
+      description: "",
+      priority: "Medium",
+      dueDate: new Date(),
+      completed: false,
     });
-    newTask.value.title = "";
-    newTask.value.description = "";
-    showAddTaskDialog.value = false;
-  }
-};
+    const currentTask = ref({
+      id: null,
+      title: "",
+      description: "",
+      priority: "Medium",
+      dueDate: new Date(),
+      completed: false,
+    });
+    const dueDateMenu = ref(false);
+    const editDueDateMenu = ref(false);
 
-const editTask = (task) => {
-  currentTask.value = { ...task };
-  showEditTaskDialog.value = true;
-};
+    const addTask = () => {
+      if (newTask.value.title && newTask.value.description) {
+        tasks.value.push({
+          id: Date.now(),
+          ...newTask.value,
+        });
+        newTask.value.title = "";
+        newTask.value.description = "";
+        newTask.value.priority = "Medium";
+        newTask.value.dueDate = new Date();
+        showAddTaskDialog.value = false;
+      }
+    };
 
-const updateTask = () => {
-  const index = tasks.value.findIndex(
-    (task) => task.id === currentTask.value.id
-  );
-  if (index !== -1) {
-    tasks.value[index] = { ...currentTask.value };
-    showEditTaskDialog.value = false;
-  }
-};
+    const editTask = (task) => {
+      currentTask.value = { ...task };
+      showEditTaskDialog.value = true;
+    };
 
-const deleteTask = (id) => {
-  tasks.value = tasks.value.filter((task) => task.id !== id);
+    const updateTask = () => {
+      const index = tasks.value.findIndex(
+        (task) => task.id === currentTask.value.id
+      );
+      if (index !== -1) {
+        tasks.value[index] = { ...currentTask.value };
+        showEditTaskDialog.value = false;
+      }
+    };
+
+    const deleteTask = (id) => {
+      tasks.value = tasks.value.filter((task) => task.id !== id);
+    };
+
+    const toggleComplete = (task) => {
+      const index = tasks.value.findIndex((t) => t.id === task.id);
+      if (index !== -1) {
+        tasks.value[index].completed = !tasks.value[index].completed;
+      }
+    };
+
+    return {
+      tasks,
+      showAddTaskDialog,
+      showEditTaskDialog,
+      newTask,
+      currentTask,
+      dueDateMenu,
+      editDueDateMenu,
+      addTask,
+      editTask,
+      updateTask,
+      deleteTask,
+      toggleComplete,
+    };
+  },
 };
 </script>
 
