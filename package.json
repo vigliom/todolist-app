@@ -3,41 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vite preview",
+    "dev": "vite",
     "build": "vite build",
-    "lint": "vue-cli-service lint",
-    "dev": "vite"
+    "serve": "vite preview"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
     "@capacitor/cli": "^6.2.0",
     "@capacitor/core": "^6.2.0",
-    "@mdi/font": "5.9.55",
-    "firebase": "^11.0.2",
-    "roboto-fontface": "*",
-    "vue": "^3.2.13",
-    "vue-router": "^4.0.3",
-    "vuetify": "npm:@vuetify/nightly@next",
-    "vuex": "^4.0.0",
-    "webfontloader": "^1.0.0"
+    "@mdi/font": "^7.4.47",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vuetify": "^3.7.5",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^3.0.3",
-    "@vue/cli-plugin-eslint": "~5.0.0",
-    "@vue/cli-plugin-router": "~5.0.0",
-    "@vue/cli-plugin-vuex": "~5.0.0",
-    "@vue/cli-service": "~5.0.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-vue": "^8.0.3",
-    "lint-staged": "^11.1.2",
-    "prettier": "^2.4.1",
-    "vite": "^3.0.8",
-    "vite-plugin-vuetify": "^1.0.0-alpha.12",
-    "vue-cli-plugin-vuetify": "~2.5.8"
-  },
-  "gitHooks": {
-    "pre-commit": "lint-staged"
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.0.3",
+    "vite-plugin-vuetify": "^2.0.4"
   }
 }
