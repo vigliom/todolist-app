@@ -1,16 +1,14 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <h1>ToDo it!</h1>
-        <v-btn color="primary" @click="showAddTaskDialog = true"
-          >Add Task</v-btn
-        >
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-list>
+    <v-card class="rounded rounded-xl bg-primary">
+        <v-col>
+           <v-date-picker-months :locale="'es'" :year="new Date().getFullYear()"/>
+        </v-col>
+    </v-card>
+    
+    <v-col>
+      <v-list>
+        <v-expansion-panels variant="accordion">
           <my-item-task
             v-for="task in tasks"
             :key="task.id"
@@ -19,9 +17,9 @@
             @editTask="editTask"
             @toggleComplete="toggleComplete"
           ></my-item-task>
-        </v-list>
-      </v-col>
-    </v-row>
+        </v-expansion-panels>
+      </v-list>
+    </v-col>
 
     <!-- Add Task Dialog -->
     <v-dialog v-model="showAddTaskDialog" max-width="500px">
@@ -146,8 +144,8 @@
 </template>
 
 <script>
-import MyItemTask from "../components/MyItemTask.vue";
 import { ref } from "vue";
+import MyItemTask from "../components/MyItemTask.vue";
 
 export default {
   name: "HomeView",
@@ -156,43 +154,21 @@ export default {
   },
   setup() {
     const tasks = ref([
-      {
-        id: 1,
-        title: "Task 1",
-        description: "Description 1",
-        priority: "High",
-        dueDate: new Date(),
-        completed: false,
-      },
-      {
-        id: 2,
-        title: "Task 2",
-        description: "Description 2",
-        priority: "Medium",
-        dueDate: new Date(),
-        completed: false,
-      },
+      { id: 1, title: "Task 1", description: "Description 1", priority: "High", dueDate: new Date(), completed: false },
+      { id: 2, title: "Task 2", description: "Description 2", priority: "Medium", dueDate: new Date(), completed: false },
+      { id: 3, title: "Task 3", description: "Description 2", priority: "Medium", dueDate: new Date(), completed: false },
+      { id: 4, title: "Task 4", description: "Description 4", priority: "Low", dueDate: new Date(), completed: false },
+      { id: 5, title: "Task 5", description: "Description 5", priority: "Medium", dueDate: new Date(), completed: false },
     ]);
-
+    
     const showAddTaskDialog = ref(false);
     const showEditTaskDialog = ref(false);
-    const newTask = ref({
-      title: "",
-      description: "",
-      priority: "Medium",
-      dueDate: new Date(),
-      completed: false,
-    });
-    const currentTask = ref({
-      id: null,
-      title: "",
-      description: "",
-      priority: "Medium",
-      dueDate: new Date(),
-      completed: false,
-    });
+    const newTask = ref({ title: "", description: "", priority: "Medium", dueDate: new Date(), completed: false });
+    const currentTask = ref({ id: null, title: "", description: "", priority: "Medium", dueDate: new Date(), completed: false });
     const dueDateMenu = ref(false);
     const editDueDateMenu = ref(false);
+    const selectedDate = ref(new Date());
+    const dateMenu = ref(false);
 
     const addTask = () => {
       if (newTask.value.title && newTask.value.description) {
@@ -214,9 +190,7 @@ export default {
     };
 
     const updateTask = () => {
-      const index = tasks.value.findIndex(
-        (task) => task.id === currentTask.value.id
-      );
+      const index = tasks.value.findIndex(task => task.id === currentTask.value.id);
       if (index !== -1) {
         tasks.value[index] = { ...currentTask.value };
         showEditTaskDialog.value = false;
@@ -224,11 +198,11 @@ export default {
     };
 
     const deleteTask = (id) => {
-      tasks.value = tasks.value.filter((task) => task.id !== id);
+      tasks.value = tasks.value.filter(task => task.id !== id);
     };
 
     const toggleComplete = (task) => {
-      const index = tasks.value.findIndex((t) => t.id === task.id);
+      const index = tasks.value.findIndex(t => t.id === task.id);
       if (index !== -1) {
         tasks.value[index].completed = !tasks.value[index].completed;
       }
@@ -247,6 +221,8 @@ export default {
       updateTask,
       deleteTask,
       toggleComplete,
+      dateMenu,
+      selectedDate,
     };
   },
 };

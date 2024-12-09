@@ -9,7 +9,7 @@
       <span>Categories</span>
     </v-btn>
     <v-btn value="settings" to="/settings">
-      <v-icon>mdi-eyedropper</v-icon>
+      <v-icon>mdi-cog-outline</v-icon>
       <span>Settings</span>
     </v-btn>
   </v-bottom-navigation>
