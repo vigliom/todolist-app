@@ -1,145 +1,20 @@
 <template>
-  <v-container>
-    <v-card class="rounded rounded-xl bg-primary">
-        <v-col>
-           <v-date-picker-months :locale="'es'" :year="new Date().getFullYear()"/>
-        </v-col>
-    </v-card>
-    
-    <v-col>
+  <v-container fluid class="pa-0">
+    <v-col cols="12">
+      <v-date-picker view-mode="month" :landscape="true" show-adjacent-months hide-weekdays hide-header hide-days class="w-100" header="Selecciona un dia" title="AppName"/>
+    </v-col>
+    <v-col cols="12">
       <v-list>
-        <v-expansion-panels variant="accordion">
-          <my-item-task
-            v-for="task in tasks"
-            :key="task.id"
-            :task="task"
-            @deleteTask="deleteTask"
-            @editTask="editTask"
-            @toggleComplete="toggleComplete"
-          ></my-item-task>
-        </v-expansion-panels>
+        <my-item-task
+          v-for="task in tasks"
+          :key="task.id"
+          :task="task"
+          @deleteTask="deleteTask"
+          @editTask="editTask"
+          @toggleComplete="toggleComplete"
+        ></my-item-task>
       </v-list>
     </v-col>
-
-    <!-- Add Task Dialog -->
-    <v-dialog v-model="showAddTaskDialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Add Task</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="form">
-            <v-text-field
-              v-model="newTask.title"
-              label="Title"
-              required
-            ></v-text-field>
-            <v-textarea
-              v-model="newTask.description"
-              label="Description"
-              required
-            ></v-textarea>
-            <v-select
-              v-model="newTask.priority"
-              :items="['High', 'Medium', 'Low']"
-              label="Priority"
-              required
-            ></v-select>
-            <v-menu
-              ref="dueDateMenu"
-              v-model="dueDateMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="newTask.dueDate"
-                  label="Due Date"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="newTask.dueDate"
-                @input="dueDateMenu = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="showAddTaskDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="addTask">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <!-- Edit Task Dialog -->
-    <v-dialog v-model="showEditTaskDialog" max-width="500px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Edit Task</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="editForm">
-            <v-text-field
-              v-model="currentTask.title"
-              label="Title"
-              required
-            ></v-text-field>
-            <v-textarea
-              v-model="currentTask.description"
-              label="Description"
-              required
-            ></v-textarea>
-            <v-select
-              v-model="currentTask.priority"
-              :items="['High', 'Medium', 'Low']"
-              label="Priority"
-              required
-            ></v-select>
-            <v-menu
-              ref="editDueDateMenu"
-              v-model="editDueDateMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="currentTask.dueDate"
-                  label="Due Date"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="currentTask.dueDate"
-                @input="editDueDateMenu = false"
-              ></v-date-picker>
-            </v-menu>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="showEditTaskDialog = false"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="updateTask">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -154,11 +29,17 @@ export default {
   },
   setup() {
     const tasks = ref([
-      { id: 1, title: "Task 1", description: "Description 1", priority: "High", dueDate: new Date(), completed: false },
-      { id: 2, title: "Task 2", description: "Description 2", priority: "Medium", dueDate: new Date(), completed: false },
-      { id: 3, title: "Task 3", description: "Description 2", priority: "Medium", dueDate: new Date(), completed: false },
-      { id: 4, title: "Task 4", description: "Description 4", priority: "Low", dueDate: new Date(), completed: false },
-      { id: 5, title: "Task 5", description: "Description 5", priority: "Medium", dueDate: new Date(), completed: false },
+    { id: 1, title: "Comprar comestibles", description: "Comprar leche, pan, huevos y frutas", priority: "High", dueDate: new Date('2024-12-06'), completed: false },
+    { id: 2, title: "Reunión con el equipo", description: "Reunión semanal de seguimiento del proyecto", priority: "Medium", dueDate: new Date('2024-12-07'), completed: false },
+    { id: 3, title: "Enviar informe mensual", description: "Preparar y enviar el informe mensual de ventas", priority: "Medium", dueDate: new Date('2024-12-08'), completed: false },
+    { id: 4, title: "Llamar al médico", description: "Programar una cita para el chequeo anual", priority: "Low", dueDate: new Date('2024-12-09'), completed: false },
+    { id: 5, title: "Limpiar la casa", description: "Limpiar la sala, cocina y baños", priority: "Medium", dueDate: new Date('2024-12-10'), completed: false },
+    { id: 6, title: "Pagar facturas", description: "Pagar la factura de electricidad y agua", priority: "High", dueDate: new Date('2024-12-11'), completed: false },
+    { id: 7, title: "Estudiar para el examen", description: "Revisar los capítulos 4 y 5 del libro de matemáticas", priority: "Low", dueDate: new Date('2024-12-12'), completed: false },
+    { id: 8, title: "Actualizar CV", description: "Agregar la experiencia laboral reciente al CV", priority: "Medium", dueDate: new Date('2024-12-13'), completed: false },
+    { id: 9, title: "Planificar vacaciones", description: "Investigar destinos y reservar vuelos y hoteles", priority: "High", dueDate: new Date('2024-12-14'), completed: false },
+    { id: 10, title: "Leer un libro", description: "Leer al menos 50 páginas del libro actual", priority: "Low", dueDate: new Date('2024-12-15'), completed: false },
+      
     ]);
     
     const showAddTaskDialog = ref(false);

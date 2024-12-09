@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-container fluid class="pa-5">
+    <v-app-bar app color="primary" title="ToDo it!" />
+    <v-container class="pa-0 mt-16">
       <router-view />
     </v-container>
     <my-bottom-nav />
